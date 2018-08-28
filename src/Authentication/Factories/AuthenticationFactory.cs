@@ -26,16 +26,19 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
 {
     public class AuthenticationFactory : IAuthenticationFactory
     {
-        public const string CommonAdTenant = "Common", 
-            DefaultMSILoginUri = "http://169.254.169.254/metadata/identity/oauth2/token", 
+        public const string CommonAdTenant = "Common",
+            DefaultMSILoginUri = "http://169.254.169.254/metadata/identity/oauth2/token",
             DefaultBackupMSILoginUri = "http://localhost:50342/oauth2/token";
 
         public AuthenticationFactory()
         {
-            TokenProvider = new AdalTokenProvider();
+            KeyStore = new ServicePrincipalKeyStore();
+            TokenProvider = new AdalTokenProvider(KeyStore);
         }
 
+        public IServicePrincipalKeyStore KeyStore { get; set; }
         public ITokenProvider TokenProvider { get; set; }
+
 
         public IAccessToken Authenticate(
             IAzureAccount account,
@@ -305,9 +308,9 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
                     case AzureAccount.AccountType.ManagedService:
                         result = new RenewingTokenCredential(
                             GetManagedServiceToken(
-                                context.Account, 
-                                context.Environment, 
-                                tenant, 
+                                context.Account,
+                                context.Environment,
+                                tenant,
                                 context.Environment.GetTokenAudience(targetEndpoint)));
                         break;
                     case AzureAccount.AccountType.User:
@@ -334,7 +337,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
                             result = ApplicationTokenProvider.LoginSilentAsync(
                                 tenant,
                                 context.Account.Id,
-                                new KeyStoreApplicationCredentialProvider(tenant),
+                                new KeyStoreApplicationCredentialProvider(tenant, KeyStore),
                                 env,
                                 tokenCache as TokenCache).ConfigureAwait(false).GetAwaiter().GetResult();
                         }
@@ -370,7 +373,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication.Factories
                     case AzureAccount.AccountType.ServicePrincipal:
                         try
                         {
-                            ServicePrincipalKeyStore.DeleteKey(account.Id, account.GetTenants().FirstOrDefault());
+                            KeyStore.DeleteKey(account.Id, account.GetTenants().FirstOrDefault());
                         }
                         catch
                         {

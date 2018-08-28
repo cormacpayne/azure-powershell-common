@@ -30,6 +30,17 @@ namespace Microsoft.Azure.Commands.Common.Authentication
     internal class ServicePrincipalTokenProvider : ITokenProvider
     {
         private static readonly TimeSpan expirationThreshold = TimeSpan.FromMinutes(5);
+        private IServicePrincipalKeyStore _keyStore;
+
+        public ServicePrincipalTokenProvider()
+        {
+            _keyStore = new ServicePrincipalKeyStore();
+        }
+
+        public ServicePrincipalTokenProvider(IServicePrincipalKeyStore keyStore)
+        {
+            _keyStore = keyStore;
+        }
 
         public IAccessToken GetAccessToken(
             AdalConfiguration config,
@@ -143,12 +154,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication
 
         private SecureString LoadAppKey(string appId, string tenantId)
         {
-            return ServicePrincipalKeyStore.GetKey(appId, tenantId);
+            return _keyStore.GetKey(appId, tenantId);
         }
 
         private void StoreAppKey(string appId, string tenantId, SecureString appKey)
         {
-            ServicePrincipalKeyStore.SaveKey(appId, tenantId, appKey);
+            _keyStore.SaveKey(appId, tenantId, appKey);
         }
 
         private class ServicePrincipalAccessToken : IRenewableToken

@@ -22,17 +22,22 @@ namespace Microsoft.Azure.Commands.Common.Authentication
     /// Helper class to store service principal keys and retrieve them
     /// from the Windows Credential Store.
     /// </summary>
-    public static class ServicePrincipalKeyStore
+    public class ServicePrincipalKeyStore : IServicePrincipalKeyStore
     {
-        private static IDictionary<string, SecureString> _credentials = new Dictionary<string, SecureString>();
+        private IDictionary<string, SecureString> _credentials { get; set; }
 
-        public static void SaveKey(string appId, string tenantId, SecureString serviceKey)
+        public ServicePrincipalKeyStore()
+        {
+            _credentials = new Dictionary<string, SecureString>();
+        }
+
+        public void SaveKey(string appId, string tenantId, SecureString serviceKey)
         {
             var key = CreateKey(appId, tenantId);
             _credentials[key] = serviceKey;
         }
 
-        public static SecureString GetKey(string appId, string tenantId)
+        public SecureString GetKey(string appId, string tenantId)
         {
             IntPtr pCredential = IntPtr.Zero;
             try
@@ -50,7 +55,7 @@ namespace Microsoft.Azure.Commands.Common.Authentication
         }
 
 
-        public static void DeleteKey(string appId, string tenantId)
+        public void DeleteKey(string appId, string tenantId)
         {
             try
             {
@@ -62,12 +67,12 @@ namespace Microsoft.Azure.Commands.Common.Authentication
             }
         }
 
-        private static string CreateKey(string appId, string tenantId)
+        private string CreateKey(string appId, string tenantId)
         {
             return $"{appId}_{tenantId}";
         }
 
-        internal static SecureString ConvertToSecureString(string password)
+        internal SecureString ConvertToSecureString(string password)
         {
             if (password == null)
                 throw new ArgumentNullException("password");

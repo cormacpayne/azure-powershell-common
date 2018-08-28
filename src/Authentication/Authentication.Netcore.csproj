@@ -40,6 +40,8 @@
     <Compile Remove="Authentication\CredStore.cs" />
     <Compile Remove="Authentication\ServicePrincipalKeyStore.cs" />
     <Compile Remove="Authentication\UserTokenProvider.cs" />
+    <Compile Remove="KeyStore\CredStore.cs" />
+    <Compile Remove="KeyStore\ServicePrincipalKeyStore.cs" />
     <Compile Remove="Utilities\AdalTokenCache.cs" />
   </ItemGroup>
 
