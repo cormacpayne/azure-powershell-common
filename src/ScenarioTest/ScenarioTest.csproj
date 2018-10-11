@@ -2,6 +2,7 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ServiceManagementDependencies>true</ServiceManagementDependencies>
+    <OmitHttpRecorderPackage>true</OmitHttpRecorderPackage>
   </PropertyGroup>
   <Import Project="$(ProjectDir)..\Dependencies.Test.targets" />
   <PropertyGroup>
@@ -68,6 +69,7 @@
     <None Include="Common.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ServiceManagement\ServiceManagement.csproj">
@@ -86,6 +88,11 @@
       <Project>{5ee72c53-1720-4309-b54b-5fb79703195f}</Project>
       <Name>Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Azure.Test.HttpRecorder, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Azure.Test.HttpRecorder.1.13.0.1\lib\net452\Microsoft.Azure.Test.HttpRecorder.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

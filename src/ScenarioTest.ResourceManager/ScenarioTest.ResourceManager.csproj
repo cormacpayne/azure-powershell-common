@@ -76,6 +76,7 @@
     <None Include="Common.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Authentication.Abstractions\Authentication.Abstractions.csproj">
